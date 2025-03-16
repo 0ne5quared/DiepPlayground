@@ -20,7 +20,7 @@ import LivingEntity from "../../Live";
 import Barrel from "../Barrel";
 
 import { HealthFlags, PositionFlags, PhysicsFlags, Stat, StyleFlags } from "../../../Const/Enums";
-import { TankDefinition } from "../../../Const/TankDefinitions";
+import { barrelAddonId, TankDefinition } from "../../../Const/TankDefinitions";
 import { BarrelBase } from "../TankBody";
 import { EntityStateFlags } from "../../../Native/Entity";
 
@@ -49,11 +49,11 @@ export default class Bullet extends LivingEntity {
     /** The tank who shot the bullet. */
     protected tank: BarrelBase;
 
+
     public constructor(barrel: Barrel, tank: BarrelBase, tankDefinition: TankDefinition | null, shootAngle: number) {
         super(barrel.game);
 
         this.tank = tank;
-        
         this.tankDefinition = tankDefinition;
 
         // if (barrel.definition.bullet.type === "drone") throw new TypeError("Invalid bullet type for this class");
@@ -79,7 +79,7 @@ export default class Bullet extends LivingEntity {
         this.styleData.values.color = bulletDefinition.color || tank.rootParent.styleData.values.color;
         this.styleData.values.flags |= StyleFlags.hasNoDmgIndicator;
         this.healthData.values.flags = HealthFlags.hiddenHealthbar;
-
+        
         const bulletDamage = statLevels ? statLevels[Stat.BulletDamage] : 0;
         const bulletPenetration = statLevels ? statLevels[Stat.BulletPenetration] : 0;
 
