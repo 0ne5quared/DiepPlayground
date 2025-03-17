@@ -24,6 +24,11 @@ import Drone from "./Projectile/Drone";
 import Rocket from "./Projectile/Rocket";
 import Skimmer from "./Projectile/Skimmer";
 import Minion from "./Projectile/Minion";
+import Homing from "./Projectile/Homing";
+import Shotgun from "./Projectile/Shotgun";
+import Lock from "./Projectile/Lock";
+import Lockshot from "./Projectile/Lockshot";
+import Slave from "./Projectile/Slave"
 import ObjectEntity from "../Object";
 import TankBody, { BarrelBase } from "./TankBody";
 
@@ -37,6 +42,7 @@ import CrocSkimmer from "./Projectile/CrocSkimmer";
 import { BarrelAddon, BarrelAddonById } from "./BarrelAddons";
 import { Swarm } from "./Projectile/Swarm";
 import NecromancerSquare from "./Projectile/NecromancerSquare";
+
 /**
  * Class that determines when barrels can shoot, and when they can't.
  */
@@ -166,6 +172,21 @@ export default class Barrel extends ObjectEntity {
 
 
         switch (this.definition.bullet.type) {
+            case "slave":
+                new Slave(this, this.tank, tankDefinition, angle);
+                break;
+            case "lockshot":
+                new Lockshot(this, this.tank, tankDefinition, angle);
+                break;
+            case "lock":
+                new Lock(this, this.tank, tankDefinition, angle);
+                break;
+            case "homing":
+                new Homing(this, this.tank, tankDefinition, angle);
+                break;
+            case "shotgun":
+                new Shotgun(this, this.tank, tankDefinition, angle);
+                break;                
             case "skimmer":
                 new Skimmer(this, this.tank, tankDefinition, angle, this.tank.inputs.attemptingRepel() ? -Skimmer.BASE_ROTATION : Skimmer.BASE_ROTATION);
                 break;
