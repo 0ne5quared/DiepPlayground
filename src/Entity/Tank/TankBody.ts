@@ -304,19 +304,21 @@ export default class TankBody extends LivingEntity implements BarrelBase {
         updateStats: {
             // Damage
             this.damagePerTick = this.cameraEntity.cameraData.statLevels[Stat.BodyDamage] * 6 + 20;
-            if (this._currentTank === Tank.Spike) this.damagePerTick *= 1.5;
+            if (this._currentTank === Tank.Spike) this.damagePerTick += 8;
+            if (this._currentTank === Tank.Spike2) this.damagePerTick *= 2;
+            if (this._currentTank === Tank.MegaSmasher) this.damagePerTick /= 4;
+
 
             // Max Health
             const maxHealthCache = this.healthData.values.maxHealth;
 
             this.healthData.maxHealth = this.definition.maxHealth + 2 * (this.cameraEntity.cameraData.values.level - 1) + this.cameraEntity.cameraData.values.statLevels.values[Stat.MaxHealth] * 20;
+            if (this._currentTank === Tank.Spike2) this.healthData.maxHealth /= 2;
+            if (this._currentTank === Tank.MegaSmasher) this.healthData.maxHealth *= 4;
             if (this.healthData.values.health === maxHealthCache) this.healthData.health = this.healthData.maxHealth; // just in case
             else if (this.healthData.values.maxHealth !== maxHealthCache) {
                 this.healthData.health *= this.healthData.values.maxHealth / maxHealthCache
             }
-
-            // Regen
-            this.regenPerTick = (this.healthData.values.maxHealth * 4 * this.cameraEntity.cameraData.values.statLevels.values[Stat.HealthRegen] + this.healthData.values.maxHealth) / 25000;
 
             // Reload
             this.reloadTime = 15 * Math.pow(0.914, this.cameraEntity.cameraData.values.statLevels.values[Stat.Reload]);
@@ -329,16 +331,17 @@ export default class TankBody extends LivingEntity implements BarrelBase {
             // Dont worry about invulnerability here - not gonna be invulnerable while flashing ever (see setInvulnerability)
             this.damageReduction = 1.0;
         }
-
         if (this.definition.sides === 2) {
             this.physicsData.width = this.physicsData.size * (this.definition.widthRatio ?? 1);
             if (this.definition.flags.displayAsTrapezoid === true) this.physicsData.flags |= PhysicsFlags.isTrapezoid;
         } else if (this.definition.flags.displayAsStar === true) this.styleData.flags |= StyleFlags.isStar;
 
-        this.accel.add({
-            x: this.inputs.movement.x * this.cameraEntity.cameraData.values.movementSpeed,
-            y: this.inputs.movement.y * this.cameraEntity.cameraData.values.movementSpeed
-        });
+        // Reload
+
+            this.accel.add({
+                x: this.inputs.movement.x * this.cameraEntity.cameraData.values.movementSpeed,
+                y: this.inputs.movement.y * this.cameraEntity.cameraData.values.movementSpeed
+            });
         this.inputs.movement.set({
             x: 0,
             y: 0

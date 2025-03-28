@@ -29,6 +29,7 @@ import Shotgun from "./Projectile/Shotgun";
 import Lock from "./Projectile/Lock";
 import Lockshot from "./Projectile/Lockshot";
 import Slave from "./Projectile/Slave"
+import Launched from "./Projectile/Launched"
 import ObjectEntity from "../Object";
 import TankBody, { BarrelBase } from "./TankBody";
 
@@ -172,6 +173,9 @@ export default class Barrel extends ObjectEntity {
 
 
         switch (this.definition.bullet.type) {
+            case "launched":
+                new Launched(this, this.tank, tankDefinition, angle);
+                break;
             case "slave":
                 new Slave(this, this.tank, tankDefinition, angle);
                 break;

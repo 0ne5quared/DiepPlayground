@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program. If not, see <https://www.gnu.org/licenses/>
 */
-
+/*
 import Barrel from "../Barrel";
 import Bullet from "./Bullet";
 
@@ -28,10 +28,10 @@ import { PI2 } from "../../../util";
 /**
  * The trap class represents the trap (projectile) entity in diep.
  */
-
+/*
 export default class Trap extends Bullet {
     /** Number of ticks before the trap cant collide with its own team. */
-
+    /*
     protected collisionEnd = 0;
 
     public constructor(barrel: Barrel, tank: BarrelBase, tankDefinition: TankDefinition | null, shootAngle: number) {
@@ -39,7 +39,6 @@ export default class Trap extends Bullet {
 
         const bulletDefinition = barrel.definition.bullet;
 
-        //this.baseSpeed = barrel.bulletAccel + 10 - Math.random() * bulletDefinition.scatterRate;
         this.baseSpeed = (barrel.bulletAccel / 2) + 30 - Math.random() * barrel.definition.bullet.scatterRate;
         this.baseAccel = 0;
         this.physicsData.values.sides = bulletDefinition.sides ?? 3;
@@ -55,7 +54,6 @@ export default class Trap extends Bullet {
         // Check this?
         this.positionData.values.angle = Math.random() * PI2;
     }
-    
 
     public tick(tick: number) {
         super.tick(tick);
@@ -66,3 +64,4 @@ export default class Trap extends Bullet {
         }
     }
 }
+*/
