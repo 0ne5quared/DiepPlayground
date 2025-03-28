@@ -36,7 +36,7 @@ export default class Homing extends Bullet {
     
     public tick(tick: number) {
         super.tick(tick);
-        const home = 0.03
+        const home = 0.02
         if ((this.tank.inputs.mouse.x - this.positionData.x) * Math.sin(this.movementAngle-home) <= (this.tank.inputs.mouse.y - this.positionData.y) * Math.cos(this.movementAngle-home) && (this.tank.inputs.mouse.x - this.positionData.x) * Math.sin(this.movementAngle+home) >= (this.tank.inputs.mouse.y - this.positionData.y) * Math.cos(this.movementAngle+home)) {
             this.movementAngle = Math.atan2(this.tank.inputs.mouse.y - this.positionData.values.y, this.tank.inputs.mouse.x - this.positionData.values.x);
         } 

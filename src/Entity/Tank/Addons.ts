@@ -197,8 +197,8 @@ const HomingAutoTurretMiniDefinition: BarrelDefinition = {
     bullet: {
         type: "homing",
         health: 1,
-        damage: 0.75,
-        speed: 0.9,
+        damage: 0.6,
+        speed: 1.1,
         scatterRate: 1,
         lifeLength: 1,
         sizeRatio: 1,
@@ -299,6 +299,13 @@ class SmasherAddon extends Addon {
         this.createGuard(6, 1.15, 0, .1);
     }
 }
+class MegaSmasherAddon extends Addon {
+    public constructor(owner: BarrelBase) {
+        super(owner);
+
+        this.createGuard(6, 1.25, 0, .1);
+    }
+}
 /** Landmine addon. */
 class LandmineAddon extends Addon {
     public constructor(owner: BarrelBase) {
@@ -339,6 +346,38 @@ class LauncherAddon extends Addon {
         }
     }
 }
+
+class Launcher2Addon extends Addon {
+    public constructor(owner: BarrelBase) {
+        super(owner);
+
+        const launcher = new ObjectEntity(this.game);
+        const sizeRatio = 50 * Math.SQRT2 / 50;
+        const widthRatio = 20 / 50;
+        const offsetRatio = 1
+        const size = this.owner.physicsData.values.size;
+
+        launcher.setParent(this.owner);
+        launcher.relationsData.values.owner = this.owner;
+        launcher.relationsData.values.team = this.owner.relationsData.values.team;
+
+        launcher.physicsData.values.size = sizeRatio * size;
+        launcher.physicsData.values.width = widthRatio * size;
+        launcher.positionData.x = offsetRatio * size;
+        launcher.styleData.values.color = Color.Barrel;
+        launcher.physicsData.values.flags |= PhysicsFlags.isTrapezoid;
+        launcher.physicsData.values.sides = 2;
+
+        launcher.tick = () => {
+            const size = this.owner.physicsData.values.size;
+
+            launcher.physicsData.size = sizeRatio * size;
+            launcher.physicsData.width = widthRatio * size;
+            launcher.positionData.x = offsetRatio * size;
+        }
+    }
+}
+
 /** Centered Auto Turret addon. */
 class AutoTurretAddon extends Addon {
     public constructor(owner: BarrelBase) {
@@ -381,7 +420,7 @@ class HomingAuto extends Addon {
     public constructor(owner: BarrelBase) {
         super(owner);
 
-        this.createHomingAutoTurrets(3);
+        this.createHomingAutoTurrets(4);
     }
 }
 /** The thing above ranger's barrel. */
@@ -577,6 +616,8 @@ export const AddonById: Record<addonId, typeof Addon | null> = {
     smasher: SmasherAddon,
     landmine: LandmineAddon,
     autoturret: AutoTurretAddon,
+    //eee
+    launcher2: Launcher2Addon,
     // not part of diep
     weirdspike: WeirdSpikeAddon,
     auto7: Auto7Addon,
@@ -584,5 +625,6 @@ export const AddonById: Record<addonId, typeof Addon | null> = {
     autorocket: AutoRocketAddon,
     spiesk: SpieskAddon,
     reverseautoturretmachinegun: ReverseAutoTurretMachineGunAddon,
-    homingauto : HomingAuto
+    homingauto : HomingAuto,
+    megasmasher: MegaSmasherAddon,
 }

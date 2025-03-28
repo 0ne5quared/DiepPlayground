@@ -17,79 +17,78 @@
 */
 
 import Barrel from "../Barrel";
-import Drone from "./Drone";
+import Bullet from "./Bullet";
 
-import { InputFlags, PhysicsFlags } from "../../../Const/Enums";
+import { InputFlags } from "../../../Const/Enums";
 import { BarrelDefinition, TankDefinition } from "../../../Const/TankDefinitions";
-import { AIState, Inputs } from "../../AI";
+import { Inputs } from "../../AI";
 import { BarrelBase } from "../TankBody";
 import { CameraEntity } from "../../../Native/Camera";
 
 /**
- * Barrel definition for the factory minion's barrel.
+ * Barrel definition for the rocketeer rocket's barrel.
  */
- const SlaveBarrelDefinition: BarrelDefinition = {
-    angle: Math.PI,
+const LaunchedBarrelDefinition: BarrelDefinition = {
+    angle: 0,
     offset: 0,
-    size: 50,
-    width: 50.4,
+    size: 70,
+    width: 72,
     delay: 0,
-    reload: 3,
-    recoil: 2,
+    reload: 1,
+    recoil: 1,
     isTrapezoid: false,
     trapezoidDirection: 0,
     addon: null,
     bullet: {
         type: "bullet",
-        health: 0.4,
-        damage: 0.4,
-        speed: 1.1,
+        health: 1,
+        damage: 0.3,
+        speed: 1.5,
         scatterRate: 1,
-        lifeLength: 0.3,
+        lifeLength: 0.4,
         sizeRatio: 1,
         absorbtionFactor: 1
     }
 };
 
 /**
- * The drone class represents the minion (projectile) entity in diep.
+ * Represents all rocketeer rockets in game.
  */
-export default class Slave extends Drone implements BarrelBase {
-    /** Size of the focus the minions orbit. */
+export default class Launched extends Bullet implements BarrelBase {
+    /** The launched's barrel */
+    private launchedBarrel: Barrel;
 
-    /** The minion's barrel */
-    private slaveBarrel: Barrel;
-
-    /** The camera entity (used as team) of the minion. */
+    /** The camera entity (used as team) of the launched. */
     public cameraEntity: CameraEntity;
-    /** The reload time of the minion's barrel. */
+    /** The reload time of the launched's barrel. */
     public reloadTime = 1;
-    /** The inputs for when to shoot or not. */
+    /** The inputs for when to shoot or not. (launched) */
     public inputs = new Inputs();
+
 
     public constructor(barrel: Barrel, tank: BarrelBase, tankDefinition: TankDefinition | null, shootAngle: number) {
         super(barrel, tank, tankDefinition, shootAngle);
-
-        const bulletDefinition = barrel.definition.bullet;
-
-        this.inputs = this.ai.inputs;
-
-
+        
         this.cameraEntity = tank.cameraEntity;
-        this.slaveBarrel = new Barrel(this, SlaveBarrelDefinition);
-        this.ai.movementSpeed = this.ai.aimSpeed = this.baseAccel;
+
+        const launchedBarrel = this.launchedBarrel = new Barrel(this, {...LaunchedBarrelDefinition});
+        launchedBarrel.styleData.values.color = this.styleData.values.color;
     }
 
     public get sizeFactor() {
         return this.physicsData.values.size / 50;
     }
 
-    /** This allows for factory to hook in before the entity moves. */
-    protected tickMixin(tick: number) {
+    public tick(tick: number) {
         this.reloadTime = this.tank.reloadTime;
-        
-        this.inputs.flags |= this.tank.inputs.flags;
+        if (!this.deletionAnimation && this.launchedBarrel) this.launchedBarrel.definition.width = ((this.barrelEntity.definition.width / 2) * LaunchedBarrelDefinition.width) / this.physicsData.values.size;
 
-        super.tickMixin(tick);
+        super.tick(tick);
+
+        if (this.deletionAnimation) return;
+        // not fully accurate
+        if (tick - this.spawnTick >= this.tank.reloadTime) this.inputs.flags |= InputFlags.leftclick;
+        // Only accurate on current version, but we dont want that
+        // if (!Entity.exists(this.barrelEntity.rootParent) && (this.inputs.flags & InputFlags.leftclick)) this.inputs.flags ^= InputFlags.leftclick; 
     }
 }
