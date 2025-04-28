@@ -24,15 +24,18 @@ import { BarrelBase } from "../TankBody";
 
 
 export default class lock extends Bullet {
+    protected postSpeed = 0;
     public constructor(barrel: Barrel, tank: BarrelBase, tankDefinition: TankDefinition | null, shootAngle: number) {
-        
+
         super(barrel, tank, tankDefinition, shootAngle);
         const bulletDefinition = barrel.definition.bullet;
-        this.baseSpeed = (barrel.bulletAccel + 30 - Math.random() * bulletDefinition.scatterRate)/2 ;
+        this.postSpeed = this.baseAccel
+        this.baseSpeed = barrel.bulletAccel/2+15 - Math.random() * barrel.definition.bullet.scatterRate; ;
+        this.baseAccel = 0;
         this.physicsData.values.sides = bulletDefinition.sides ?? 3;
-        this.baseAccel *= -0.25;
-        this.physicsData.values.size *= 0.7
-        this.lifeLength += 15
+        this.physicsData.values.size *= 0.7;
+
+        this.lifeLength += 5
     }
 
     
@@ -41,11 +44,11 @@ export default class lock extends Bullet {
         
 
         if (tick >= this.spawnTick + 15) {
-            this.baseAccel = (this.baseSpeed  * 2)-30
+            this.baseAccel =this.postSpeed
             this.movementAngle = this.positionData.angle
         }
 
-        if (tick <= this.spawnTick + 20) {
+        if (tick <= this.spawnTick + 16) {
             this.positionData.angle = Math.atan2(this.tank.inputs.mouse.y - this.positionData.values.y, this.tank.inputs.mouse.x - this.positionData.values.x);
             if (this.tank.inputs.attemptingRepel()) {
                 this.positionData.angle += Math.PI; 

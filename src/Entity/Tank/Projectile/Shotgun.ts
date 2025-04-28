@@ -26,11 +26,7 @@ import { sign } from "crypto";
 export default class Shotgun extends Bullet {
     public constructor(barrel: Barrel, tank: BarrelBase, tankDefinition: TankDefinition | null, shootAngle: number) {
         super(barrel, tank, tankDefinition, shootAngle);
-        const sizeFactor = tank.sizeFactor;
-        const {x, y} = tank.getWorldPosition();
-        this.positionData.values.x = x + (Math.cos(shootAngle) * 100 * sizeFactor) - Math.sin(shootAngle) * barrel.definition.offset * sizeFactor + Math.cos(shootAngle);
-        this.positionData.values.y = y + (Math.sin(shootAngle) * 100 * sizeFactor) + Math.cos(shootAngle) * barrel.definition.offset * sizeFactor + Math.sin(shootAngle);
-        this.baseSpeed *= 0.6+Math.random()*0.4
+        this.baseSpeed += Math.random()*30 - 15
     }
 
     

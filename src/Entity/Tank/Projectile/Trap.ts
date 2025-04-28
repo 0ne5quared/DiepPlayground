@@ -28,17 +28,22 @@ import { PI2 } from "../../../util";
 /**
  * The trap class represents the trap (projectile) entity in diep.
  */
+
 export default class Trap extends Bullet {
     /** Number of ticks before the trap cant collide with its own team. */
+
     protected collisionEnd = 0;
+
 
     public constructor(barrel: Barrel, tank: BarrelBase, tankDefinition: TankDefinition | null, shootAngle: number) {
         super(barrel, tank, tankDefinition, shootAngle);
-
         const bulletDefinition = barrel.definition.bullet;
+        const distance = Math.sqrt((this.tank.inputs.mouse.x - this.positionData.x) ** 2 + (this.tank.inputs.mouse.y - this.positionData.y) ** 2)
+        const minimumspeed = 30
+        this.baseSpeed = Math.max(Math.min(distance / 10, this.baseAccel - Math.random() * barrel.definition.bullet.scatterRate),minimumspeed)
 
-        this.baseSpeed = (barrel.bulletAccel / 2) + 30 - Math.random() * barrel.definition.bullet.scatterRate;
         this.baseAccel = 0;
+
         this.physicsData.values.sides = bulletDefinition.sides ?? 3;
         if (this.physicsData.values.flags & PhysicsFlags.noOwnTeamCollision) this.physicsData.values.flags ^= PhysicsFlags.noOwnTeamCollision;
         this.physicsData.values.flags |= PhysicsFlags.onlySameOwnerCollision;
@@ -48,10 +53,10 @@ export default class Trap extends Bullet {
         this.collisionEnd = this.lifeLength >> 3;
         this.lifeLength = (600 * barrel.definition.bullet.lifeLength) >> 3;
         if (tankDefinition && tankDefinition.id === DevTank.Bouncy) this.collisionEnd = this.lifeLength - 1;
-        
         // Check this?
         this.positionData.values.angle = Math.random() * PI2;
     }
+    
 
     public tick(tick: number) {
         super.tick(tick);

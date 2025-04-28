@@ -36,6 +36,7 @@ import { Inputs } from "../AI";
 import AbstractBoss from "../Boss/AbstractBoss";
 import { ArenaState } from "../../Native/Arena";
 import { AccessLevel, maxPlayerLevel } from "../../config";
+import { findSourceMap } from "module";
 
 /**
  * Abstract type of entity which barrels can connect to.
@@ -303,8 +304,8 @@ export default class TankBody extends LivingEntity implements BarrelBase {
         // Update stat related
         updateStats: {
             // Damage
-            this.damagePerTick = this.cameraEntity.cameraData.statLevels[Stat.BodyDamage] * 6 + 20;
-            if (this._currentTank === Tank.Spike) this.damagePerTick *= 1.5;
+            this.damagePerTick = this.cameraEntity.cameraData.statLevels[Stat.BodyDamage] * 4 + 20;
+            if (this._currentTank === Tank.Spike) this.damagePerTick += 8;
 
             // Max Health
             const maxHealthCache = this.healthData.values.maxHealth;
@@ -315,13 +316,18 @@ export default class TankBody extends LivingEntity implements BarrelBase {
                 this.healthData.health *= this.healthData.values.maxHealth / maxHealthCache
             }
 
-            // Regen
-            this.regenPerTick = (this.healthData.values.maxHealth * 4 * this.cameraEntity.cameraData.values.statLevels.values[Stat.HealthRegen] + this.healthData.values.maxHealth) / 25000;
+
+            this.regenPerTick = this.healthData.values.maxHealth * (4 * this.cameraEntity.cameraData.values.statLevels.values[Stat.HealthRegen] + 1 ) / 25000;
+            
+            //const time = this.game.tick - this.lastDamageTick
+            //this.regenPerTick = (this.healthData.values.maxHealth * (1 + this.cameraEntity.cameraData.values.statLevels.values[Stat.HealthRegen]) * time) / 250000;
+ 
+
 
             // Reload
             this.reloadTime = 15 * Math.pow(0.914, this.cameraEntity.cameraData.values.statLevels.values[Stat.Reload]);
-        }
 
+        }
         this.scoreData.score = this.cameraEntity.cameraData.values.score;
 
         if ((this.styleData.values.flags & StyleFlags.isFlashing) && (this.game.tick >= this.cameraEntity.cameraData.values.spawnTick + 374 || this.inputs.attemptingShot() || this.inputs.movement.magnitude > 0)) {
@@ -329,16 +335,30 @@ export default class TankBody extends LivingEntity implements BarrelBase {
             // Dont worry about invulnerability here - not gonna be invulnerable while flashing ever (see setInvulnerability)
             this.damageReduction = 1.0;
         }
-
         if (this.definition.sides === 2) {
             this.physicsData.width = this.physicsData.size * (this.definition.widthRatio ?? 1);
             if (this.definition.flags.displayAsTrapezoid === true) this.physicsData.flags |= PhysicsFlags.isTrapezoid;
         } else if (this.definition.flags.displayAsStar === true) this.styleData.flags |= StyleFlags.isStar;
 
+        let acc = 1;
+        switch (this.currentTank) {
+            case Tank.Smasher:
+            case Tank.Landmine:
+            case Tank.Spike:
+                acc = 1 + this.cameraEntity.cameraData.values.statLevels.values[Stat.Reload] * 0.3;
+            break;
+        }
+
+
+        //IDK if this is correct
+        //Dont put acc above 10 lol
+
+        this.velocity.magnitude *= (1-(acc/10))/9*10;
         this.accel.add({
-            x: this.inputs.movement.x * this.cameraEntity.cameraData.values.movementSpeed,
-            y: this.inputs.movement.y * this.cameraEntity.cameraData.values.movementSpeed
+            x: this.inputs.movement.x * this.cameraEntity.cameraData.values.movementSpeed * acc,
+            y: this.inputs.movement.y * this.cameraEntity.cameraData.values.movementSpeed * acc
         });
+
         this.inputs.movement.set({
             x: 0,
             y: 0

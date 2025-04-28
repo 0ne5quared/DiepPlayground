@@ -20,9 +20,8 @@ import * as util from "../util";
 
 import ObjectEntity from "./Object";
 import TankBody from "./Tank/TankBody";
-
 import { visibilityRateDamage } from "../Const/TankDefinitions";
-import { StyleFlags } from "../Const/Enums";
+import { StyleFlags, Tank} from "../Const/Enums";
 import { HealthGroup } from "../Native/FieldGroups";
 
 /**
@@ -74,7 +73,6 @@ export default class LivingEntity extends ObjectEntity {
             dF1 *= 1.5;
             dF2 *= 1.5;
         }
-
         // Damage can't be more than enough to kill health
         const ratio = Math.max(1 - entity1.healthData.values.health / dF2, 1 - entity2.healthData.values.health / dF1)
         if (ratio > 0) { // Or >=, but minor optimizations

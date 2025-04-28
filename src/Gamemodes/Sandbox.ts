@@ -31,7 +31,7 @@ export class SandboxShapeManager extends ShapeManager {
         for (const client of this.game.clients) {
             if (client.camera) i += 1;
         }
-        return Math.floor(i * 12.5);
+        return Math.floor(i * 25);
     }
 }
 

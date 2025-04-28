@@ -60,6 +60,7 @@ export default class NecromancerSquare extends Drone {
         this.physicsData.values.absorbtionFactor = bulletDefinition.absorbtionFactor;
 
         this.baseSpeed = 0;
+        this.damageReduction = 1;
     }
 
     /** Given a shape, it will create a necromancer square using stats from the shape */
@@ -71,8 +72,7 @@ export default class NecromancerSquare extends Drone {
         sunchip.positionData.values.y = shape.positionData.values.y;
         sunchip.positionData.values.angle = shape.positionData.values.angle;
         
-        const shapeDamagePerTick: number = shape['damagePerTick'];
-
+        const shapeDamagePerTick: number = shape['damagePerTick'];;
         sunchip.damagePerTick *= shapeDamagePerTick / 8;
         sunchip.healthData.values.maxHealth = (sunchip.healthData.values.health *= (shapeDamagePerTick / 8));
         return sunchip;

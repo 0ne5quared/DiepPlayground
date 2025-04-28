@@ -20,6 +20,7 @@ import * as util from "../../util";
 
 import Bullet from "./Projectile/Bullet";
 import Trap from "./Projectile/Trap";
+import Block from "./Projectile/Block";
 import Drone from "./Projectile/Drone";
 import Rocket from "./Projectile/Rocket";
 import Skimmer from "./Projectile/Skimmer";
@@ -27,8 +28,10 @@ import Minion from "./Projectile/Minion";
 import Homing from "./Projectile/Homing";
 import Shotgun from "./Projectile/Shotgun";
 import Lock from "./Projectile/Lock";
-import Lockshot from "./Projectile/Lockshot";
+import TrapShot from "./Projectile/TrapShot";
 import Slave from "./Projectile/Slave"
+import Launched from "./Projectile/Launched"
+import Rotating from "./Projectile/Rotating";
 import ObjectEntity from "../Object";
 import TankBody, { BarrelBase } from "./TankBody";
 
@@ -172,12 +175,22 @@ export default class Barrel extends ObjectEntity {
 
 
         switch (this.definition.bullet.type) {
+            case "rotating":
+                new Rotating(this, this.tank, tankDefinition, angle);
+                break;
+            case "launched":
+                new Launched(this, this.tank, tankDefinition, angle);
+                break;
             case "slave":
                 new Slave(this, this.tank, tankDefinition, angle);
                 break;
-            case "lockshot":
-                new Lockshot(this, this.tank, tankDefinition, angle);
-                break;
+            case "trapshot":
+                for (let i = 0; i < (this.definition.droneCount  || 1); i++) {
+                    const scatterAngle = (Math.PI / 180) * this.definition.bullet.scatterRate * (Math.random() - .5) * 10;
+                    let angle = this.definition.angle + scatterAngle + this.tank.positionData.values.angle;
+                    new TrapShot(this, this.tank, tankDefinition, angle);
+                }
+                break;  
             case "lock":
                 new Lock(this, this.tank, tankDefinition, angle);
                 break;
@@ -185,7 +198,11 @@ export default class Barrel extends ObjectEntity {
                 new Homing(this, this.tank, tankDefinition, angle);
                 break;
             case "shotgun":
-                new Shotgun(this, this.tank, tankDefinition, angle);
+                for (let i = 0; i < (this.definition.droneCount  || 1); i++) {
+                    const scatterAngle = (Math.PI / 180) * this.definition.bullet.scatterRate * (Math.random() - .5) * 10;
+                    let angle = this.definition.angle + scatterAngle + this.tank.positionData.values.angle;
+                    new Shotgun(this, this.tank, tankDefinition, angle);
+                }
                 break;                
             case "skimmer":
                 new Skimmer(this, this.tank, tankDefinition, angle, this.tank.inputs.attemptingRepel() ? -Skimmer.BASE_ROTATION : Skimmer.BASE_ROTATION);
@@ -201,6 +218,9 @@ export default class Barrel extends ObjectEntity {
             }
             case 'trap':
                 new Trap(this, this.tank, tankDefinition, angle);
+                break;
+            case 'block':
+                new Block(this, this.tank, tankDefinition, angle);
                 break;
             case 'drone':
                 new Drone(this, this.tank, tankDefinition, angle);

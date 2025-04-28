@@ -35,7 +35,7 @@ import { CameraEntity } from "../../../Native/Camera";
     width: 50.4,
     delay: 0,
     reload: 3,
-    recoil: 3,
+    recoil: 2,
     isTrapezoid: false,
     trapezoidDirection: 0,
     addon: null,
@@ -43,9 +43,9 @@ import { CameraEntity } from "../../../Native/Camera";
         type: "bullet",
         health: 0.4,
         damage: 0.4,
-        speed: 1,
+        speed: 1.1,
         scatterRate: 1,
-        lifeLength: 0.5,
+        lifeLength: 0.3,
         sizeRatio: 1,
         absorbtionFactor: 1
     }
